@@ -1,0 +1,90 @@
+[2.821s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[2.821s] DEBUG:colcon:Parsed command line arguments: Namespace(allow_overriding=[], ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=None, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=False, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f262ef313a0>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=4, paths=None, symlink_install=False, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f262ef313a0>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f262ea86fd0>)
+[2.941s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[2.941s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[2.941s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[2.941s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[2.941s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[2.941s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[2.941s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/ros/rosamathe_ws/src/project_turtlebot'
+[2.941s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[2.941s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[2.941s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[2.942s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[2.942s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[2.942s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[2.942s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[2.942s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[2.942s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[2.957s] DEBUG:colcon.colcon_core.package_identification:Package '.' with type 'ros.ament_python' and name 'project_turtlebot'
+[2.957s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[2.957s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[2.957s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[2.957s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[2.957s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[3.220s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[3.220s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[3.313s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 4 installed packages in /home/ros/rosamathe_ws/install
+[3.362s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 256 installed packages in /opt/ros/foxy
+[3.363s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[3.536s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'cmake_args' from command line to 'None'
+[3.536s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'cmake_target' from command line to 'None'
+[3.536s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[3.536s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'cmake_clean_cache' from command line to 'False'
+[3.537s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'cmake_clean_first' from command line to 'False'
+[3.537s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'cmake_force_configure' from command line to 'False'
+[3.537s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'ament_cmake_args' from command line to 'None'
+[3.537s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'catkin_cmake_args' from command line to 'None'
+[3.537s] Level 5:colcon.colcon_core.verb:set package 'project_turtlebot' build argument 'catkin_skip_building_tests' from command line to 'False'
+[3.537s] DEBUG:colcon.colcon_core.verb:Building package 'project_turtlebot' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot', 'merge_install': False, 'path': '/home/ros/rosamathe_ws/src/project_turtlebot', 'symlink_install': False, 'test_result_base': None}
+[3.594s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[3.642s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[3.643s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/ros/rosamathe_ws/src/project_turtlebot' with build type 'ament_python'
+[3.643s] Level 1:colcon.colcon_core.shell:create_environment_hook('project_turtlebot', 'ament_prefix_path')
+[3.697s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[3.697s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/hook/ament_prefix_path.ps1'
+[3.698s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/hook/ament_prefix_path.dsv'
+[3.699s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/hook/ament_prefix_path.sh'
+[3.747s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.747s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.200s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/ros/rosamathe_ws/src/project_turtlebot'
+[4.255s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.255s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.831s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ros/rosamathe_ws/src/project_turtlebot': PYTHONPATH=/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/prefix_override:/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/project_turtlebot build --build-base /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build install --record /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/install.log --install-scripts $base/lib/project_turtlebot --single-version-externally-managed
+[5.180s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ros/rosamathe_ws/src/project_turtlebot' returned '0': PYTHONPATH=/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/prefix_override:/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/project_turtlebot build --build-base /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build install --record /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/install.log --install-scripts $base/lib/project_turtlebot --single-version-externally-managed
+[5.237s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot' for CMake module files
+[5.237s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot' for CMake config files
+[5.238s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib'
+[5.238s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/bin'
+[5.238s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/pkgconfig/project_turtlebot.pc'
+[5.239s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages'
+[5.239s] Level 1:colcon.colcon_core.shell:create_environment_hook('project_turtlebot', 'pythonpath')
+[5.288s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/hook/pythonpath.ps1'
+[5.288s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/hook/pythonpath.dsv'
+[5.289s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/hook/pythonpath.sh'
+[5.290s] Level 1:colcon.colcon_core.environment:checking '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/bin'
+[5.290s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(project_turtlebot)
+[5.341s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/package.ps1'
+[5.342s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/package.dsv'
+[5.343s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/package.sh'
+[5.343s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/package.bash'
+[5.344s] INFO:colcon.colcon_core.shell:Creating package script '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot/package.zsh'
+[5.345s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/colcon-core/packages/project_turtlebot)
+[5.346s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[5.346s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[5.346s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[5.346s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[5.401s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[5.401s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[5.401s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[5.424s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[5.483s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros/rosamathe_ws/src/project_turtlebot/install/local_setup.ps1'
+[5.484s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ros/rosamathe_ws/src/project_turtlebot/install/_local_setup_util_ps1.py'
+[5.485s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros/rosamathe_ws/src/project_turtlebot/install/setup.ps1'
+[5.536s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros/rosamathe_ws/src/project_turtlebot/install/local_setup.sh'
+[5.536s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ros/rosamathe_ws/src/project_turtlebot/install/_local_setup_util_sh.py'
+[5.537s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros/rosamathe_ws/src/project_turtlebot/install/setup.sh'
+[5.590s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros/rosamathe_ws/src/project_turtlebot/install/local_setup.bash'
+[5.591s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros/rosamathe_ws/src/project_turtlebot/install/setup.bash'
+[5.645s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ros/rosamathe_ws/src/project_turtlebot/install/local_setup.zsh'
+[5.646s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ros/rosamathe_ws/src/project_turtlebot/install/setup.zsh'

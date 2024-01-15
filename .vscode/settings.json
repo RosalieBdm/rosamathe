@@ -1,0 +1,13 @@
+{
+    "ros.distro": "foxy",
+    "python.autoComplete.extraPaths": [
+        "/home/ros/rosamathe_ws/install/project_turtlesim/lib/python3.8/site-packages",
+        "/home/ros/rosamathe_ws/install/project_turtlebot/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/ros/rosamathe_ws/install/project_turtlesim/lib/python3.8/site-packages",
+        "/home/ros/rosamathe_ws/install/project_turtlebot/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ]
+}

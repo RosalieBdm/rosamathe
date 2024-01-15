@@ -1,0 +1,35 @@
+running egg_info
+creating build/project_turtlebot/project_turtlebot.egg-info
+writing build/project_turtlebot/project_turtlebot.egg-info/PKG-INFO
+writing dependency_links to build/project_turtlebot/project_turtlebot.egg-info/dependency_links.txt
+writing entry points to build/project_turtlebot/project_turtlebot.egg-info/entry_points.txt
+writing requirements to build/project_turtlebot/project_turtlebot.egg-info/requires.txt
+writing top-level names to build/project_turtlebot/project_turtlebot.egg-info/top_level.txt
+writing manifest file 'build/project_turtlebot/project_turtlebot.egg-info/SOURCES.txt'
+reading manifest file 'build/project_turtlebot/project_turtlebot.egg-info/SOURCES.txt'
+writing manifest file 'build/project_turtlebot/project_turtlebot.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build
+creating /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib
+creating /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot
+copying project_turtlebot/node_project_turtlebot.py -> /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot
+copying project_turtlebot/__init__.py -> /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot
+running install
+running install_lib
+creating /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot
+copying /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot/node_project_turtlebot.py -> /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot
+copying /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot/__init__.py -> /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot
+byte-compiling /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot/node_project_turtlebot.py to node_project_turtlebot.cpython-38.pyc
+byte-compiling /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot/__init__.py to __init__.cpython-38.pyc
+running install_data
+creating /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/ament_index
+creating /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/ament_index/resource_index
+creating /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/ament_index/resource_index/packages
+copying resource/project_turtlebot -> /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/ament_index/resource_index/packages
+copying package.xml -> /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot
+running install_egg_info
+Copying build/project_turtlebot/project_turtlebot.egg-info to /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot-0.0.0-py3.8.egg-info
+running install_scripts
+Installing talker script to /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/project_turtlebot
+writing list of installed files to '/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/install.log'

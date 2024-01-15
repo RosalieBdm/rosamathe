@@ -1,0 +1,3 @@
+[console_scripts]
+talker = project_turtlebot.node_project_turtlebot:main
+

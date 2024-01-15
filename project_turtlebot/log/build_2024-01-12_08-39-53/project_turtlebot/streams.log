@@ -1,0 +1,25 @@
+[1.187s] Invoking command in '/home/ros/rosamathe_ws/src/project_turtlebot': PYTHONPATH=/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/prefix_override:/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/project_turtlebot build --build-base /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build install --record /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/install.log --install-scripts $base/lib/project_turtlebot --single-version-externally-managed
+[1.444s] running egg_info
+[1.444s] writing build/project_turtlebot/project_turtlebot.egg-info/PKG-INFO
+[1.444s] writing dependency_links to build/project_turtlebot/project_turtlebot.egg-info/dependency_links.txt
+[1.445s] writing entry points to build/project_turtlebot/project_turtlebot.egg-info/entry_points.txt
+[1.445s] writing requirements to build/project_turtlebot/project_turtlebot.egg-info/requires.txt
+[1.445s] writing top-level names to build/project_turtlebot/project_turtlebot.egg-info/top_level.txt
+[1.481s] reading manifest file 'build/project_turtlebot/project_turtlebot.egg-info/SOURCES.txt'
+[1.482s] writing manifest file 'build/project_turtlebot/project_turtlebot.egg-info/SOURCES.txt'
+[1.483s] running build
+[1.483s] running build_py
+[1.483s] copying project_turtlebot/node_project_turtlebot.py -> /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot
+[1.483s] running install
+[1.484s] running install_lib
+[1.485s] copying /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build/lib/project_turtlebot/node_project_turtlebot.py -> /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot
+[1.486s] byte-compiling /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot/node_project_turtlebot.py to node_project_turtlebot.cpython-38.pyc
+[1.488s] running install_data
+[1.489s] copying package.xml -> /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/share/project_turtlebot
+[1.489s] running install_egg_info
+[1.491s] removing '/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot-0.0.0-py3.8.egg-info' (and everything under it)
+[1.491s] Copying build/project_turtlebot/project_turtlebot.egg-info to /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages/project_turtlebot-0.0.0-py3.8.egg-info
+[1.492s] running install_scripts
+[1.510s] Installing talker script to /home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/project_turtlebot
+[1.510s] writing list of installed files to '/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/install.log'
+[1.537s] Invoked command in '/home/ros/rosamathe_ws/src/project_turtlebot' returned '0': PYTHONPATH=/home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/prefix_override:/home/ros/rosamathe_ws/src/project_turtlebot/install/project_turtlebot/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/project_turtlebot build --build-base /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/build install --record /home/ros/rosamathe_ws/src/project_turtlebot/build/project_turtlebot/install.log --install-scripts $base/lib/project_turtlebot --single-version-externally-managed
