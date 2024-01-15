@@ -34,6 +34,11 @@
       colcon build
       ros2 run project_turtlebot talker_{ID}   
   (pour l'instant, seulement talker et talker_5 disponibles)
+  
+## Fichiers:
+- custom_interfaces : package avec nos formats de messages customisés
+- project_turtlebot : package avec les nodes qui commandent les turtlebots (seulement 1 et 5 pour l'instant)
+- project_turtle_sim: package avec le node qui commande turtlesim
 
 # Avancées:
 ##   15/01:
