@@ -2,10 +2,9 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
-import numpy as np
 import math
-from custom_interfaces.msg import Trajectories
-from std_msgs.msg import String
+
+from project_interfaces.msg import Trajectory
 
 
 ANGLE_DEBUT_ALIGNEMENT = 0.25 #Angle seuil qui déclanche le réalignement 

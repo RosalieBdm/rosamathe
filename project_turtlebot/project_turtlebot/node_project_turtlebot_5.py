@@ -2,73 +2,79 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
-import numpy as np
 import math
-from custom_interfaces.msg import Trajectories
-from std_msgs.msg import String
+from typing import Tuple, Iterable
+
+from project_interfaces.msg import Trajectory
 
 
-ANGLE_DEBUT_ALIGNEMENT = 0.25 #Angle seuil qui déclanche le réalignement 
-ANGLE_FIN_ALIGNEMENT = 0.15 #Angle seuil qui stoppe l'alignement 
-DISTANCE_TOLERANCE = 0.1 #Distance seuil à laquelle l'objectif est atteint
-RAYON_VISIBILITE = 1 #Distance seuil à laquelle les voisins sont visibles
-ID = 5
+ANGLE_DEBUT_ALIGNEMENT = 0.25                                                   #Angle seuil qui déclanche le réalignement 
+ANGLE_FIN_ALIGNEMENT = 0.15                                                     #Angle seuil qui stoppe l'alignement 
+DISTANCE_CHECKPOINT_THRESHOLD = 0.1                                             #Distance seuil à laquelle l'objectif est atteint
+RADIUS_VISIBILITY = 1                                                           #Distance seuil à laquelle les voisins sont visibles
+LINEAR_SPEED_DEFAULT = 0.1                                                      # the linear speed
 
 
-class SubscriberPublisher(Node):
+class Turtlebot(Node):
 
-    def __init__(self):
+    def __init__(self, id: int, list_checkpoints: Iterable[Tuple[float, float]]):
         super().__init__('node_projet')
 
         #---------------------------------------#
         # INITIALISATION SUBSCRIBERS/PUBLISHERS # 
         #---------------------------------------#
 
-        # Subscriber qui récupère l'odométrie du robot 
-        self.subscriptionTurtle = self.create_subscription(
-            Odometry,     # type du message odom = Odometry.msg
-            '/robot_5/odom',  # topic = odom
-            self.listener_callback,
-            10) 
+        self.subscriber_turtlebot_odometry = self.create_subscription(          # Subscriber to get the odometry of the robot
+            Odometry,                                                           # message type
+            '/robot_5/odom',                                                    # topic to subscribe to
+            self.turtlebot_odometry_callback,                                   # callback to handle the message
+            10                                                                  # queue size
+        ) 
 
-        # Subscriber qui récupère la position des voisins 
-        self.subscriptionComm = self.create_subscription(
-            Trajectories,    
-            '/turtle_com',  
-            self.communication_callback,
-            10) 
+        self.subscriber_turtlebot_trajectories = self.create_subscription(      # Subscriber to get the other robot positions and checkpoints that they want to reach
+            Trajectory,                                                         # message type
+            '/turtle_com',                                                      # topic to subscribe to
+            self.trajectory_callback,                                           # callback to handle the message
+            10                                                                  # queue size
+        ) 
         
-        # Publisher qui commande le robot
-        self.publisherComm= self.create_publisher(Trajectories, '/turtle_com', 10)  #topic = nom du topic
+        self.publisher_turtlebot_trajectories = self.create_publisher(          # Publisher to give the robot position and checkpoint to reach to others
+            Trajectory,                                                         # message type
+            '/turtle_com',                                                      # topic to publish to
+            10                                                                  # queue size
+        )
 
-        # Publisher qui donne la position du robot aux voisins
-        self.publisherTurtle= self.create_publisher(Twist, '/robot_5/cmd_vel', 10)  #topic = nom du topic
+        self.publisher_turtlebot_motors_controller = self.create_publisher(     # Publisher to control the robot movements
+            Twist,                                                              # message type
+            '/robot_5/cmd_vel',                                                 # topic to publish to
+            10                                                                  # queue size
+        )
 
         #-----------------------------------------#
-        # DECLARATION  DES ATTRIBUTS DE LA CLASSE #
+        # DECLARATION DES ATTRIBUTS DE LA CLASSE #
         #-----------------------------------------#
-        self.pointList = [(0.0,0.0),(2.0,0.0)] #liste des points à atteindre
-        self.index = 0 #index du point actuel 
-        self.currentPoint = self.pointList[0] # point actuel à atteindre
-        self.angleRobotPoint = 0.0 # orientation robot par rapport au point (entre -pi et pi radians)
-        self.currentPosition = [0.0,0.0] # position du robot
-        self.orientation = 0.0 # orientation du robot par rapport à son référentiel (entre -pi et pi radians)
-        self.glissement = 0.0 # valeur du glissement pour éviter les voisins (pour l'instant , entre -pi et pi radians, à modifier par la suite)
-        self.state = "walk" #Etat du robot [walk (avancer tout droit), turn (tourner), stop (s'arrêter)]
-        self.id = ID #ID du robot
+        self.list_checkpoints_to_reach = list_checkpoints                       # list of checkpoints to reach
+        self.index_checkpoint_to_reach = 0                                      # index of the current checkpoint to reach
+        self.checkpoint_to_reach = self.list_checkpoints_to_reach[0]            # current checkpoint to reach
+        self.angle_robot_to_checkpoint = 0.0                                    # orientation robot par rapport au point (entre -pi et pi radians)
+        self.position = [0.0, 0.0]                                              # position du robot
+        self.orientation = 0.0                                                  # orientation du robot par rapport à son référentiel (entre -pi et pi radians)
+        self.zeghal_shifting_force = 0.0                                        # valeur du glissement pour éviter les voisins (pour l'instant , entre -pi et pi radians, à modifier par la suite)
+        self.state = "walk"                                                     # Etat du robot [walk (avancer tout droit), turn (tourner), stop (s'arrêter)]
+        self.id = id                                                            # ID du robot
 
     #--------------------CALLBACK DE MOUVEMENT-----------------------------#
     #Commande le robot en fonction des données odométriques reçues dans msg
-    def listener_callback(self, msg):
+    def turtlebot_odometry_callback(self, odometry_message: Odometry) -> None:
         
         # mise à jour des variables globales
-        self.currentPosition = msg.pose.pose.position.x, msg.pose.pose.position.y 
-        self.orientation = euler_from_quaternion(msg.pose.pose.orientation)[2]
-        self.angleRobotPoint = calcul_alignement(self.currentPosition, self.orientation, self.currentPoint)
-        self.get_logger().info('glissement: ' + str(self.glissement))
+        self.position = odometry_message.pose.pose.position.x, odometry_message.pose.pose.position.y 
+        self.orientation = euler_from_quaternion(odometry_message.pose.pose.orientation)[2]
+        self.angle_robot_to_checkpoint = calculate_alignment(self.position, self.orientation, self.checkpoint_to_reach)
+        self.get_logger().info(f"Zeghal shifting coeficient: {self.zeghal_shifting_force}")
 
         # Si le point objectif est atteint, modification de l'objectif
-        if (point_atteint(self.currentPosition,self.currentPoint)):
+        if (checkpoint_reached(self.position, self.checkpoint_to_reach)):
             
             """
             # VERSION AVEC LES ENTREES UTILISATEUR #
@@ -83,13 +89,8 @@ class SubscriberPublisher(Node):
 
             #VERSION AVEC LISTE DE POINTS
             
-            self.index += 1
-            if (self.index >= len(self.pointList)): #cas où on a atteint la fin de la liste : on recommence depuis le premier élément
-                self.index= 0
-                self.currentPoint = self.pointList[self.index]
-            else:
-                self.currentPoint = self.pointList[self.index]
-            #self.get_logger().info('Prochain Point: ' + str(self.currentPoint))
+            self.index_checkpoint_to_reach += 1
+            self.checkpoint_to_reach = self.list_checkpoints_to_reach[self.index_checkpoint_to_reach % len(self.list_checkpoints_to_reach)]
             
         # Si le point objectif n'est pas atteint, gestion des états et déplacement 
         else :
@@ -99,66 +100,48 @@ class SubscriberPublisher(Node):
 
             # Test pour arrêter le robot si il a un voisin dans son périmètre de vision 
             #(Pour l'instant, il reste arrêté indéfiniement, il faut modifier pour qu'il évite le voisin au lieu de s'arrêter)
-            if self.glissement!=0:
-                self.state="stop"
+            if self.zeghal_shifting_force != 0:
+                self.state = "stop"
             # Repart si pas de voisin
-            elif self.state =="stop":
-                self.state="walk"
+            elif self.state == "stop":
+                self.state = "walk"
             #Arrête de tourner si angle sous le seuil ANGLE_FIN_ALIGNEMENT
-            elif ((abs(self.angleRobotPoint) < ANGLE_FIN_ALIGNEMENT) and self.state == "turn") : # si on est quasiment alignés avec le point
-                self.state="stop"
+            elif ((abs(self.angle_robot_to_checkpoint) < ANGLE_FIN_ALIGNEMENT) and self.state == "turn") : # si on est quasiment alignés avec le point
+                self.state = "stop"
             #Commence à tourner si l'angle est au dessus du seuil ANGLE_DEBUT_ALIGNEMENT
-            elif ((abs(self.angleRobotPoint) > ANGLE_DEBUT_ALIGNEMENT) and self.state == "walk"):
-                self.state="turn"
+            elif ((abs(self.angle_robot_to_checkpoint) > ANGLE_DEBUT_ALIGNEMENT) and self.state == "walk"):
+                self.state = "turn"
             #Par défaut, avance 
             else:
                 self.state = "walk"
             
-            
-            
-            #---GESTION DEPLACEMENTS---#
-            
-                
-             #Avance en ligne droite
-            if self.state == "walk":
-                msg = Twist()
-                msg.linear.x = 0.1
-                msg.linear.y = 0.0
-                msg.linear.z = 0.0
-                msg.angular.z = 0.0
-                self.publisherTurtle.publish(msg) 
-            #Tourne vers l'objectif 
-            elif self.state == "turn":
-                #self.get_logger().info('Pas aligné' + str(self.angleRobotPoint))
-                msg = Twist()
-                msg.linear.x = 0.0
-                msg.linear.y = 0.0
-                msg.linear.z = 0.0
-                msg.angular.z = self.angleRobotPoint * 0.5 #Plus l'angle est élevé, plus le robot tourne vite
-                self.publisherTurtle.publish(msg)
-            #Reste immobile
-            else: 
-                msg = Twist()
-                msg.linear.x = 0.0
-                msg.linear.y = 0.0
-                msg.linear.z = 0.0
-                msg.angular.z = 0.0
-                self.publisherTurtle.publish(msg)
+            #---GESTION DEPLACEMENTS---# 
+            motors_command = Twist()
+            motors_command.linear.x = 0.0                                               # x linear speed is set to 0
+            motors_command.linear.y = 0.0                                               # y linear speed is set to 0
+            motors_command.linear.z = 0.0                                               # z linear speed is set to 0
+            motors_command.angular.z = 0.0                                              # z angular speed is set to 0
+
+            if self.state == "walk":                                                    # STATE WALK
+                motors_command.linear.x = LINEAR_SPEED_DEFAULT                          # movement in a straight line
+            elif self.state == "turn":                                                  # STATE TURN
+                motors_command.angular.z = self.angle_robot_to_checkpoint * 0.5         # the more the rotation to make, the greater is the angular speed
+            self.publisher_turtlebot_motors_controller.publish(motors_command)
      
 
         #ENVOI DE LA POSITION AUX VOISINS 
-        msgComm = Trajectories()
+        msgComm = Trajectory()
         msgComm.id = self.id 
-        msgComm.x = self.currentPosition[0]
-        msgComm.y = self.currentPosition[1]
-        msgComm.px=self.currentPoint[0]
-        msgComm.py=self.currentPoint[1]
-        self.publisherComm.publish(msgComm)
+        msgComm.x = self.position[0]
+        msgComm.y = self.position[1]
+        msgComm.px=self.checkpoint_to_reach[0]
+        msgComm.py=self.checkpoint_to_reach[1]
+        self.publisher_turtlebot_trajectories.publish(msgComm)
 
     #------------------------CALLBACK COMMUNICATION VOISINS---------------------#
     #Calcule la valeur du glissement si le voisin est dans le rayon de visibilité et risque de croiser le robot
-    def communication_callback(self, msg):
-        if ( msg.id != self.id ): #si le voisin est différent du robot
+    def trajectory_callback(self, trajectory_message: Trajectory) -> None:
+        if trajectory_message.id != self.id: #si le voisin est différent du robot
             """
             #Calcul du glissement avec zeghal, à revoir 
             # détection voisin renvoie true si voisin dans rayon visibilité et calcul_croisement renvoie true si trajectoire voisin croise trajectoire robot (à tester)
@@ -168,37 +151,28 @@ class SubscriberPublisher(Node):
                 self.glissement = 0
             """
             #Test pour déclancher l'état stop si le voisin est dans le périmètre
-            if (detection_voisin(self.currentPosition, (msg.x, msg.y))):
-                self.glissement = 10
+            if (detect_neighbor(self.position, (trajectory_message.x, trajectory_message.y))):
+                self.zeghal_shifting_force = 10
             else:
-                self.glissement = 0
+                self.zeghal_shifting_force = 0
 
 
-def main(args=None):
-    rclpy.init(args=args)
+def calculate_alignment(coords_robot: Tuple[float, float], bearing_robot: float, coords_destination: Tuple[float, float]) -> float:
+    """Calculate the angle between the robot orientationn and the vector robot->destination
+    This function is also used to calculate the angle between the robot orientaiton and the vector robot->neighbor
+    In this specific case, the coords_destination corresponds to the coordinates of the neighbor.
 
-    subscriberPublisher = SubscriberPublisher()
+    Args:
+        coords_robot (Tuple[float, float]):         the cartesian coordinates of a robot
+        orientation_robot (float):                  the bearing of the robot in radians [-PI, PI] in its own referential
+        coords_destination (Tuple[float, float]):   the cartesian coordinates of the destination of the robot
 
-    rclpy.spin(subscriberPublisher) # executer les callback
-    print("Noeuds créés")
-    
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    subscriberPublisher.destroy_node()
-    rclpy.shutdown()
-
-#calcul de l'angle entre deux vecteurs : vecteur orientation du robot et vecteur robot-point
-# position_robot : [float , float] , position du robot
-# orientation_robot : float , orientation du robot dans son référentiel, valeur dans [-pi, pi]
-# point : [float , float] , point à atteindre 
-def calcul_alignement(position_robot, orientation_robot, point):
-    # cette fonction est aussi utilisée pour calculer l'angle entre le vecteur orientation du robot et le vecteur robot-voisin
-    # dans ce cas, point est la position du voisin 
-
+    Returns:
+        float: _description_
+    """
 
     #calcul du vecteur robot-point 
-    vecteur_robot_point = [point[0] - position_robot[0], point[1] - position_robot[1]]
+    vecteur_robot_point = [coords_destination[0] - coords_robot[0], coords_destination[1] - coords_robot[1]]
     
     # Cas où le robot est exactement sur l'objectif
     if (vecteur_robot_point[0] == 0):
@@ -214,14 +188,14 @@ def calcul_alignement(position_robot, orientation_robot, point):
     # Normalisation des angles sur [0, 2pi]
     if anglePoint < 0 :
         anglePoint += 2*math.pi
-    if orientation_robot < 0:
-        orientation_robot += 2*math.pi
+    if bearing_robot < 0:
+        bearing_robot += 2*math.pi
     
     #print("anglePoint : " + str(anglePoint))
     #print("orientation : " + str(orientation_robot))
         
     # Calcul de l'angle recherché (valeur dans [-2pi, 2pi])
-    theta = anglePoint - orientation_robot
+    theta = anglePoint - bearing_robot
     # Normalisation de l'angle sur [-pi, pi]
     if theta > math.pi:
         theta -= 2*math.pi
@@ -229,60 +203,95 @@ def calcul_alignement(position_robot, orientation_robot, point):
        theta += 2*math.pi
     return theta 
   
+def checkpoint_reached(coords_robot: Tuple[float, float], coords_checkpoint: Tuple[float, float]):
+    """Check if a checkpoint has been reached based on the coordinates of a checkpoint and the coordinates of a robot.
 
-# Return true si le robot est suffisament proche de l'objectif 
-# position_robot : [float , float] , position du robot
-# point : [float , float] , point à atteindre 
-def point_atteint(position, point):
+    Args:
+        coords_robot (Tuple[float, float]):         the cartesian coordinates of a robot
+        coords_checkpoint (Tuple[float, float]):    the cartesian coordinates of a robot's checkpoint to reach
+
+    Returns:
+        bool: True if the checkpoint has been reached, else False
+    """
     # calcul de la distance à l'objectif 
-    distance = math.sqrt((position[0] - point[0])**2 + (position[1] - point[1])**2)
+    distance = math.sqrt((coords_robot[0] - coords_checkpoint[0])**2 + (coords_robot[1] - coords_checkpoint[1])**2)
+    return distance < DISTANCE_CHECKPOINT_THRESHOLD
 
-    if (distance < DISTANCE_TOLERANCE) :
-        return True
-    return False
+def ccw(A: Tuple[float, float], B: Tuple[float, float], C: Tuple[float, float]) -> bool:
+    """Utility function to find of two trajectories are crossing.
+    Found on internet.
 
-# Fonction utile pour croisement (récupérée sur internet)
-def ccw(A,B,C):
+    Args:
+        A (Tuple[float, float]): TODO
+        B (Tuple[float, float]): TODO
+        C (Tuple[float, float]): TODO
+
+    Returns:
+        bool: TODO
+    """
     return (C[1] - A[1]) * (B[0] - A[0]) > (B[1] - A[1]) * (C[0] - A[0])
 
-# Return true si les trajectoires se croisent (récupérée sur internet)
-# pos_voisin : [float , float] , position du voisin
-# point_voisin : [float , float] , point à atteindre pour le voisin
-# pos_robot : [float , float] , position du robot
-# point_robot : [float , float] , point à atteindre pour le robot
-def calcul_croisement(pos_voisin, point_voisin, pos_robot, point_robot):
-    return ccw(pos_voisin, pos_robot, point_robot) != ccw(point_voisin, pos_robot, point_robot) and ccw(pos_voisin, point_voisin, pos_robot) != ccw(pos_voisin, point_voisin, point_robot)
+
+def detect_possible_collision(coords_neighbor: Tuple[float, float], coords_dest_neighbor: Tuple[float, float], coords_robot: Tuple[float, float], coords_dest_robot: Tuple[float, float]) -> bool:
+    """Detect if the trajectories of the two robots are crossing each other
+
+    Args:
+        coords_neighbor (Tuple[float, float]):          the cartesian coordinates of a neighbor
+        coords_dest_neighbor (Tuple[float, float]):     the cartesian coordinates of the checkpoint to be reached by the neighbor
+        coords_robot (Tuple[float, float]):             the cartesian coordinates of the robot
+        coords_dest_robot (Tuple[float, float]):        the cartesian coordinates of the checkpint to be reached by the robot
+
+    Returns:
+        bool: True if the trajectories are crossing, else False
+    """
+    return ccw(coords_neighbor, coords_robot, coords_dest_robot) != ccw(coords_dest_neighbor, coords_robot, coords_dest_robot) and ccw(coords_neighbor, coords_dest_neighbor, coords_robot) != ccw(coords_neighbor, coords_dest_neighbor, coords_dest_robot)
 
 
-# Return true si le robot détecte un voisin dans son rayon de visibilité
-# pos_robot : [float , float] , position du robot
-# pos_voisin : [float , float] , position du voisin
-def detection_voisin(pos_robot, pos_voisin):
-    distance = math.sqrt((pos_robot[0] - pos_voisin[0])**2 + (pos_robot[1] - pos_voisin[1])**2)
+def detect_neighbor(coords_robot: Tuple[float, float], coords_neighbor: Tuple[float, float]) -> bool:
+    """Detect if another robot is visible by the current robot and if it should be acknowledge
 
-    if (distance < RAYON_VISIBILITE) :
-        print("VOISIN")
-        return True
-    return False
+    Args:
+        coords_robot (Tuple[float, float]):         the cartesian coordinates of a robot
+        coords_neighbor (Tuple[float, float]):      the cartesian coordinates of another robot
 
+    Returns:
+        bool: True if the other robot is considered visible, else False
+    """
+    distance = math.sqrt((coords_robot[0] - coords_neighbor[0])**2 + (coords_robot[1] - coords_neighbor[1])**2)
 
-# Calcul les forces de glissement (à compléter)
-# pos_voisin : [float , float] , position du voisin
-# orientation_voisin : float , orientation du voisin dans son référentiel, valeur dans [-pi, pi]
-# pos_robot : [float , float] , position du robot
-# orientation_robot : float , orientation du robot dans son référentiel, valeur dans [-pi, pi]
-def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot):
-    #calcul de l'angle entre l'orientation du robot et le vecteur robot-voisin
-    angle_robot_voisin = calcul_alignement(pos_robot,orientation_robot, pos_voisin) 
-    #calcul de la différence entre l'orientation du robot et l'orientation du voisin 
-    angle_orientation_robot_voisin = orientation_robot - orientation_voisin 
-
-    #à compléter (pourquoi on retourne ça ?)
-    return angle_robot_voisin - angle_orientation_robot_voisin
+    return distance < RADIUS_VISIBILITY
 
 
-# Tranforme un Quaternion en angles d'euler (récupérée sur internet)
-def euler_from_quaternion(quaternion):
+def calculate_zeghal(bearing_neighbor: float, coords_neighbor: Tuple[float, float], bearing_robot: float, coords_robot: Tuple[float, float]) -> float:
+    """Calculate the zeghal shift force to apply in order to avoid 
+
+    Args:
+        bearing_neighbor (float):                   the orientation of a neighbor in radians [-PI, PI] in its own referential
+        coords_neighbor (Tuple[float, float]):      the cartesian coordinates of a neighbor
+        bearing_robot (float):                      the orientation of the robot in radians [-PI, PI] in its own referential
+        coords_robot (Tuple[float, float]):         the cartesian coordinates of the robot
+
+    Returns:
+        float: the zeghal shift force
+    """
+    angle_robot_neighbor = calculate_alignment(coords_robot,bearing_robot, coords_neighbor)     # calculate the angle between the robot orientation and the vector robot-neighbor
+    angle_orientation_robot_neighbor = bearing_robot - bearing_neighbor                         # calculate the difference between the robot orientaiton and its neighbor orientation
+
+    # TODO to complete
+    # ? why do we return this
+    return angle_robot_neighbor - angle_orientation_robot_neighbor
+
+
+def euler_from_quaternion(quaternion) -> Tuple[float, float, float]:
+    """Transform quaternion coordinates to euler coordinates
+    Function found on internet.
+
+    Args:
+        quaternion (_type_): a quaternion # TODO description to complete and type to find
+
+    Returns:
+        Tuple[float, float, float]: the euler coordinates of the quaternion
+    """
     x = quaternion.x 
     y = quaternion.y
     z = quaternion.z
@@ -298,7 +307,22 @@ def euler_from_quaternion(quaternion):
     t4 = +1.0 - 2.0 * (y*y + z*z)
     yaw_z= math.atan2(t3,t4)
 
-    return(roll_x, pitch_y, yaw_z)
+    return roll_x, pitch_y, yaw_z
+
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    turtlebot = Turtlebot(id=5, list_checkpoints=[(0.0, 0.0), (2.0, 0.0)])
+
+    rclpy.spin(turtlebot) # executer les callback
+    print("Noeuds créés")
+    
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    turtlebot.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

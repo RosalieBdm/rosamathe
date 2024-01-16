@@ -13,14 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='ros',
-    maintainer_email='ros@todo.todo',
+    maintainer='consithe1',
+    maintainer_email='constantin.thebaudeau@insa-lyon.fr',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-		'talker = project_turtlesim.node_project_turtlesim:main'
+            'robot = project_turtlesim.robot:main'
         ],
     },
 )
