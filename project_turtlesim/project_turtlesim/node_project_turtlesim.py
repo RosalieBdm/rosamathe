@@ -1,7 +1,6 @@
 
 import rclpy
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
 from geometry_msgs.msg import Twist
 from turtlesim.msg import Pose
 import math
@@ -78,6 +77,11 @@ class RobotTurtlesim(Node):
         self.state = WALK
         
     def turtlesim_pose_callback(self, msg: Pose):
+        """Callback used when a new Pose message is published on the topic 
+
+        Args:
+            msg (Pose): the pose of a turtle (coordinates and bearing)
+        """
         
         self.coordinates = msg.x, msg.y
         self.angle_robot_to_checkpoint = calculate_alignment_with_checkpoint(msg, self.checkpoint_to_reach)
@@ -91,13 +95,10 @@ class RobotTurtlesim(Node):
             self.checkpoint_to_reach = self.list_checkpoints[self.index % len(self.list_checkpoints)]
             
         else :
+            # calculate the new state of the turtle
             self.set_state()
-
-            motors_command = Twist()
-            motors_command.linear.x = 0.0
-            motors_command.linear.y = 0.0
-            motors_command.linear.z = 0.0
-            motors_command.angular.z = 0.0
+            # generate a Twist command that has all parameters set to 0
+            motors_command = generate_reset_motors_command()
 
             if self.state == WALK:
                 self.get_logger().info("Robot is aligned with checkpoint.")
