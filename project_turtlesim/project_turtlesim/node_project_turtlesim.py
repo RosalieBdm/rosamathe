@@ -29,38 +29,46 @@ class RobotTurtlesim(Node):
         Node (_type_): a ros2 node.
     """
 
-    def __init__(self, id: int, list_checkpoints: Iterable[Tuple[float, float]]) -> None:
-        super().__init__(f'node_robot{id}')
-
-        self.id: int = id                                                                       # the id number of the robot
+    def __init__(self) -> None:
+        super().__init__('node_robot')
         
+        self.declare_parameters('', [                                                           # declare the parameters to be given to the node by the launcher
+            ('id', -1),
+            ('checkpoints', [])
+        ])
+
+        self.id = self.get_parameter('id').get_parameter_value().integer_value                  # get the id number from the parameters
+        
+        # the list of checkpoints is given as a list of floats/doubles in the launch file (no list of tuples type available)
+        tmp_list_checkpoints = self.get_parameter('checkpoints').get_parameter_value().double_array_value
+        # create the list of checkpoints from this array of doubles
+        self.list_checkpoints = [(tmp_list_checkpoints[i], tmp_list_checkpoints[i+1]) for i in range(0, len(tmp_list_checkpoints), 2)]
+
         self.subscriber_turtlesim_pose = self.create_subscription(
             Pose,                                                                               # message type
-            f'/turtle{self.id}/pose',                                                           # topic to subscribe to
+            f'/turtlesim1/turtle{self.id}/pose',                                                # topic to subscribe to
             self.turtlesim_pose_callback,                                                       # callback to handle messages
             10                                                                                  # queue size
         )
         self.publisher_motors_control = self.create_publisher(
             Twist,                                                                              # message type
-            f'/turtle{self.id}/cmd_vel',                                                        # topic to publish to
+            f'/turtlesim1/turtle{self.id}/cmd_vel',                                             # topic to publish to
             10                                                                                  # queue size
         ) 
 
         self.subscriber_robot_trajectories = self.create_subscription(
             Trajectory,                                                                         # message type
-            '/turtle_com',                                                                      # topic to subscribe to
+            '/robot/trajectory',                                                                # topic to subscribe to
             self.robot_trajectories_callback,                                                   # callback to handle the messages
             10                                                                                  # queue size
         )
         
         self.publisher_robot_trajectories = self.create_publisher(
             Trajectory,                                                                         # message type
-            '/turtle_com',                                                                      # topic to publish to     
+            '/robot/trajectory',                                                                # topic to publish to     
             10                                                                                  # queue size
         )
-        
-        self.list_checkpoints: Iterable[Tuple[float, float]] = list_checkpoints                 # the list of checkpoints to foolow by the robot
-        
+                
         self.index: int = 0
         self.checkpoint_to_reach: Tuple[float, float] = self.list_checkpoints[self.index]       # set the next checkpoint coordinates to reach
         self.angle_robot_to_checkpoint: float = None                                            # set the robot orientation to the checkpoint
@@ -241,21 +249,14 @@ def euler_from_quaternion(quaternion) -> Tuple[float, float, float]:
 def main(args=None):
     rclpy.init(args=args)
 
-    lists_checkpoints = [[(2.0, 5.0), (8.0, 5.0)], [(5.0, 8.0), (5.0, 2.0)]]
-    print("Creating two nodes of type RobotTurtlesim.")
-    nodes = [RobotTurtlesim(id=i+1, list_checkpoints=lists_checkpoints[i]) for i in range(len(lists_checkpoints))]
+    node = RobotTurtlesim()
 
-    print("Creating multithreaded executor.")
-    executor = MultiThreadedExecutor(num_threads=2)
-    [executor.add_node(node) for node in nodes]
-
-    print("Running the nodes with the executor.")
-    executor.spin()
+    rclpy.spin(node)
     
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    [node.destroy_node() for node in nodes]
+    node.destroy_node()
 
     rclpy.shutdown()
 

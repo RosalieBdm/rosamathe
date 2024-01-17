@@ -130,13 +130,13 @@ class Turtlebot(Node):
      
 
         #ENVOI DE LA POSITION AUX VOISINS 
-        msgComm = Trajectory()
-        msgComm.id = self.id 
-        msgComm.x = self.position[0]
-        msgComm.y = self.position[1]
-        msgComm.px=self.checkpoint_to_reach[0]
-        msgComm.py=self.checkpoint_to_reach[1]
-        self.publisher_turtlebot_trajectories.publish(msgComm)
+        msg_trajectory = Trajectory()
+        msg_trajectory.id = self.id 
+        msg_trajectory.x = self.position[0]
+        msg_trajectory.y = self.position[1]
+        msg_trajectory.px=self.checkpoint_to_reach[0]
+        msg_trajectory.py=self.checkpoint_to_reach[1]
+        self.publisher_turtlebot_trajectories.publish(msg_trajectory)
 
     #------------------------CALLBACK COMMUNICATION VOISINS---------------------#
     #Calcule la valeur du glissement si le voisin est dans le rayon de visibilité et risque de croiser le robot
