@@ -8,8 +8,8 @@ from typing import Tuple, Iterable
 
 from project_interfaces.msg import Trajectory
 
-ANGULAR_THRESHOLD = 0.15
-ANGULAR_DRIFT_THRESHOLD = 0.25
+ANGULAR_THRESHOLD = 0.25
+ANGULAR_DRIFT_THRESHOLD = 0.15
 DISTANCE_THRESHOLD = 0.1
 RADIUS_VISIBILITY = 1
 
@@ -29,7 +29,7 @@ class RobotTurtlesim(Node):
     """
 
     def __init__(self) -> None:
-        super().__init__('node_robot')
+        super().__init__('node_turtlesim_robot')
         
         self.declare_parameters('', [                                                           # declare the parameters to be given to the node by the launcher
             ('id', -1),
@@ -98,16 +98,22 @@ class RobotTurtlesim(Node):
             # calculate the new state of the turtle
             self.set_state()
             # generate a Twist command that has all parameters set to 0
-            motors_command = generate_reset_motors_command()
+            vel_msg = Twist()
+            vel_msg.linear.x = 0.0
+            vel_msg.linear.y = 0.0
+            vel_msg.linear.z = 0.0
+            vel_msg.angular.x = 0.0
+            vel_msg.angular.y = 0.0
+            vel_msg.angular.z = 0.0
 
             if self.state == WALK:
                 self.get_logger().info("Robot is aligned with checkpoint.")
-                motors_command.linear.x = LINEAR_SPEED_DEFAULT
+                vel_msg.linear.x = LINEAR_SPEED_DEFAULT
             elif self.state == TURN:
                 self.get_logger().info("Robot is not aligned with checkpoint.")
-                motors_command.angular.z = self.angle_robot_to_checkpoint * ANGULAR_SPEED_COEF
+                vel_msg.angular.z = self.angle_robot_to_checkpoint * ANGULAR_SPEED_COEF
                 
-            self.publisher_motors_control.publish(motors_command)
+            self.publisher_motors_control.publish(vel_msg)
         
         trajectory_msg = Trajectory()
         trajectory_msg.id = self.id
@@ -122,16 +128,19 @@ class RobotTurtlesim(Node):
             self.shifting_force = 0
             if (neighbor_detection(self.coordinates, (msg.x, msg.y)) and detect_possible_collision((msg.x, msg.y), (msg.px, msg.py), self.coordinates, self.checkpoint_to_reach)):
                 self.get_logger().warning(f"Robot-{msg.id} and Robot-{self.id} might have a collision.")
-                pass#self.shifting_force = calculate_zeghal_shift_force(msg.orientation, (msg.x, msg.y), self.orientation, self.coordinates)
+                # ! self.shifting_force = calculate_zeghal_shift_force(msg.orientation, (msg.x, msg.y), self.orientation, self.coordinates)
 
     def set_state(self) -> None:
         if self.shifting_force != 0.0:
             self.state = STOP
         elif self.state == STOP:
+            # start walking if no obstacles
             self.state = WALK
         elif abs(self.angle_robot_to_checkpoint) < ANGULAR_THRESHOLD and self.state == TURN:
+            # stop rotation if the angle robot to checkpoint is under a threshold
             self.state = STOP
         elif abs(self.angle_robot_to_checkpoint) > ANGULAR_DRIFT_THRESHOLD and self.state == WALK:
+            # start rotation if the turtle is considered to not be anymore aligned with checkpoint
             self.state = TURN
         else:
             self.state = WALK
