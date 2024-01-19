@@ -7,6 +7,8 @@
 ## Hypothèses:
 - L'environnement est connu (carte)
 - Il n'y a pas d'obstacle entre les points
+- Les robots partent du même points
+- Les robots se croisent deux par deux 
 
 ## Mise en oeuvre:
 - Les turtlebots sont commandés depuis un PC sur des node différents (calculs effectués par chaque node, pas de calculs centralisés)
@@ -14,6 +16,7 @@
 - communication entre les turtlebots sur le topic /turtle_com
 - calculs glissements de Zeghal pour l'évitement
 - tests des algorithmes sur turtlesim
+- détection des voisins par distance entre robot et voisin 
 
 ## Commandes pour lancer les turtlebots:
 ### Pour chaque turtlebot:
@@ -24,7 +27,7 @@
       cd ~/kobuki_base
       source install/setup.dev
       export ROS_DOMAIN_ID=1
-      ros2 run kobuki_node kobuki_ros_node __ns:=/robot_{ID}
+      ros2 run kobuki_node kobuki_ros_node --ros-args --remap __ns:=/robot_{ID}
   
 - Dans un second terminal:
   
@@ -45,7 +48,21 @@
   - robots suivent les points
   - robots s'arrètent si voisin détecté
   - launcher pour lancer plusieurs turtlesim
-##   A faire:
+###   A faire:
   - tester calculs de croisements
   - tester calculs de glissements 
   - mettre à jour les calculs de croisements (pour l'instants, les robots sont considérés comme des points)
+
+##   19/01:
+  - robots suivent les points
+  - calcul de zeghal ok 
+  - robots avancent et tournent en même temps
+  - détection de voisins seulement par distance ( plus de détection de croisement)
+###   A faire:
+  - Trouver les bonnes valeurs pour l'angle de glissement et les distances de détection de voisins
+  - Lancer le node avec le launcher
+  - Tester plein de cas de figure différents 
+
+    
+
+
