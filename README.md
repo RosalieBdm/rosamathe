@@ -7,12 +7,12 @@
 ## Hypothèses:
 - L'environnement est connu (carte)
 - Il n'y a pas d'obstacle entre les points
-- Les robots partent du même points
+- Les robots partent du même point
 - Les robots se croisent deux par deux 
 
 ## Mise en oeuvre:
-- Les turtlebots sont commandés depuis un PC sur des node différents (calculs effectués par chaque node, pas de calculs centralisés)
-- ROS_DOMAIN_ID identique pour tous les turtlebots (ajout de namespaces pour les distinguer)
+- Un PC crée un node pour chaque turtlebot et les calculs sont effectués par les nodes (pas centralisé)
+- ROS_DOMAIN_ID identique pour tous les turtlebots -> ajout de namespaces /robot_{ID} pour les distinguer 
 - communication entre les turtlebots sur le topic /turtle_com
 - calculs glissements de Zeghal pour l'évitement
 - tests des algorithmes sur turtlesim
