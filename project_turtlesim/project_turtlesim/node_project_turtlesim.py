@@ -10,11 +10,11 @@ from project_interfaces.msg import Trajectory
 
 ANGULAR_THRESHOLD = 0.25
 ANGULAR_DRIFT_THRESHOLD = 0.15
-DISTANCE_THRESHOLD = 0.1
-RADIUS_VISIBILITY = 1
+DISTANCE_CHECKPOINT_THRESHOLD = 0.1                                                             # the maximum distance robot->checkpoint 
+RADIUS_VISIBILITY = 1                                                                           # the radius of visibility of a turtle
 
-LINEAR_SPEED_DEFAULT = 2.0
-ANGULAR_SPEED_COEF = 0.5
+LINEAR_SPEED_DEFAULT = 2.0                                                                      # the default linear speed of a turtle
+ANGULAR_SPEED_COEF = 0.5                                                                        # the angular speed coeficient of a turtle
 
 STOP = 0
 WALK = 1
@@ -112,7 +112,7 @@ class RobotTurtlesim(Node):
             elif self.state == TURN:
                 self.get_logger().info("Robot is not aligned with checkpoint.")
                 vel_msg.angular.z = self.angle_robot_to_checkpoint * ANGULAR_SPEED_COEF
-                
+
             self.publisher_motors_control.publish(vel_msg)
         
         trajectory_msg = Trajectory()
@@ -140,22 +140,12 @@ class RobotTurtlesim(Node):
             # stop rotation if the angle robot to checkpoint is under a threshold
             self.state = STOP
         elif abs(self.angle_robot_to_checkpoint) > ANGULAR_DRIFT_THRESHOLD and self.state == WALK:
-            # start rotation if the turtle is considered to not be anymore aligned with checkpoint
+            # start rotation if the turtle is considered to not be aligned anymore with checkpoint
             self.state = TURN
         else:
             self.state = WALK
 
         self.get_logger().info(f"Robot state: {self.state=}")
-                
-
-def generate_reset_motors_command() -> Twist:
-    command = Twist()
-    command.linear.x = 0.0
-    command.linear.y = 0.0
-    command.linear.z = 0.0
-    command.angular.z = 0.0
-
-    return command
 
 
 def checkpoint_reached(coords_robot: Tuple[float, float], coords_checkpoint: Tuple[float, float]) -> bool:
@@ -170,7 +160,7 @@ def checkpoint_reached(coords_robot: Tuple[float, float], coords_checkpoint: Tup
     """
     distance = math.sqrt((coords_robot[0] - coords_checkpoint[0])**2 + (coords_robot[1] - coords_checkpoint[1])**2)
     print(f"Distance robot -> checkpoint = {distance:.2f}")
-    return distance < DISTANCE_THRESHOLD
+    return distance < DISTANCE_CHECKPOINT_THRESHOLD
 
 
 def ccw(A,B,C):
