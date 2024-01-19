@@ -1,6 +1,3 @@
-import rclpy
-from rclpy.node import Node
-import numpy as np
 import math
 
 
@@ -112,7 +109,7 @@ def calcul_angle_vecteur(point1, point2):
 # orientation_voisin : float , orientation du voisin dans son référentiel, valeur dans [-pi, pi]
 # pos_robot : [float , float] , position du robot
 # orientation_robot : float , orientation du robot dans son référentiel, valeur dans [-pi, pi]
-def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot):
+def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot) -> float:
 
     #calcul de la différence entre l'orientation du robot et l'orientation du voisin (v1 -v2)
     angle_orientation_robot_voisin = orientation_robot - orientation_voisin 
