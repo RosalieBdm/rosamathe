@@ -36,7 +36,37 @@
       source install/setup.bash
       colcon build
       ros2 run project_turtlebot talker 
- -> mettre le code pour le launcher
+
+### Launcher
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description() -> LaunchDescription:
+    turtle1_node = Node(
+        package='project_turtlebot',
+        executable='talker',
+        parameters=[
+            {'id': 1},
+            {'checkpoints': [2.0, 0.0, 0.0, 2.0]}
+        ]
+    )
+
+    turtle5_node = Node(
+        package='project_turtlebot',
+        executable='talker',
+        parameters=[
+            {'id': 5},
+            {'checkpoints': [2.0, 0.0, 0.0, 2.0]}
+        ]
+    )
+
+    return LaunchDescription([
+        turtle1_node,
+        turtle5_node
+    ])
+```
   
 ## Fichiers:
 - custom_interfaces : package avec nos formats de messages customisés
