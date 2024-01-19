@@ -7,7 +7,7 @@ def generate_launch_description() -> LaunchDescription:
         executable='talker',
         parameters=[
             {'id': 1},
-            {'checkpoints': []}
+            {'checkpoints': [2.0, 0.0, 0.0, 2.0]}
         ]
     )
 
@@ -16,7 +16,7 @@ def generate_launch_description() -> LaunchDescription:
         executable='talker',
         parameters=[
             {'id': 5},
-            {'checkpoints': []}
+            {'checkpoints': [2.0, 0.0, 0.0, 2.0]}
         ]
     )
 
