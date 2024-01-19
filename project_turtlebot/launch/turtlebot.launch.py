@@ -11,7 +11,7 @@ def generate_launch_description() -> LaunchDescription:
         ]
     )
 
-    turtle2_node = Node(
+    turtle5_node = Node(
         package='project_turtlebot',
         executable='talker',
         parameters=[
@@ -22,5 +22,5 @@ def generate_launch_description() -> LaunchDescription:
 
     return LaunchDescription([
         turtle1_node,
-        turtle2_node
+        turtle5_node
     ])
