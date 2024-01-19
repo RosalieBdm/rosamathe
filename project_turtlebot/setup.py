@@ -20,8 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-		'talker = project_turtlebot.node_project_turtlebot:main',
-        'talker_5 = project_turtlebot.node_project_turtlebot_5:main'
+		'talker = project_turtlebot.node_project_turtlebot:main'
         ],
     },
 )
