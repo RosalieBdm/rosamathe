@@ -65,12 +65,12 @@ class SubscriberPublisher(Node):
 
     #--------------------CALLBACK DE MOUVEMENT-----------------------------#
     #Commande le robot en fonction des données odométriques reçues dans msg
-    def listener_callback(self, msg: Odometry) -> None:
+    def listener_callback(self, msg_vel: Odometry) -> None:
 
         # mise à jour des variables globales
-        self.currentPosition = msg.pose.pose.position.x, msg.pose.pose.position.y 
-        self.orientation = euler_from_quaternion(msg.pose.pose.orientation)[2]
-        self.angleRobotPoint = calcul_alignement(self.currentPosition, self.orientation, self.coords_checkpoint_to_reach)
+        self.currentPosition = msg_vel.pose.pose.position.x, msg_vel.pose.pose.position.y 
+        self.orientation = euler_from_quaternion(msg_vel.pose.pose.orientation)[2]
+        
         self.get_logger().info('glissement: ' + str(self.glissement))
 
         # Si le point objectif est atteint, modification de l'objectif
@@ -83,54 +83,46 @@ class SubscriberPublisher(Node):
             #self.get_logger().info('Prochain Point: ' + str(self.currentPoint))
             
         # Si le point objectif n'est pas atteint, gestion des états et déplacement 
-        else :
-            # Etat walk : avance tout droit. Si il n'est pas aligné, ->  turn. Si il croise un voisin, -> stop
-            # Etat turn : tourne. Si il est aligné -> stop
-            # Etat stop: stop (réduit le problème d'arc de cercle). Si il n'y a plus de voisin dans le périmètre, -> walk
+        
+        # Etat walk : avance tout droit. Si il n'est pas aligné, ->  turn. Si il croise un voisin, -> stop
+        # Etat turn : tourne. Si il est aligné -> stop
+        # Etat stop: stop (réduit le problème d'arc de cercle). Si il n'y a plus de voisin dans le périmètre, -> walk
 
-            # Test pour arrêter le robot si il a un voisin dans son périmètre de vision 
-            #(Pour l'instant, il reste arrêté indéfiniement, il faut modifier pour qu'il évite le voisin au lieu de s'arrêter)
-            #if self.glissement!=0:
-            #    self.state="stop"
-            # Repart si pas de voisin
+        # Test pour arrêter le robot si il a un voisin dans son périmètre de vision 
+        #(Pour l'instant, il reste arrêté indéfiniement, il faut modifier pour qu'il évite le voisin au lieu de s'arrêter)
+        #if self.glissement!=0:
+        #    self.state="stop"
+        # Repart si pas de voisin
+
+        self.angleRobotPoint = calcul_alignement(self.currentPosition, self.orientation, self.coords_checkpoint_to_reach)
             
-            if self.state =="stop":
-                self.state="walk"
-            #Arrête de tourner si angle sous le seuil ANGLE_FIN_ALIGNEMENT
-            elif ((abs(self.angleRobotPoint+ self.glissement) < ANGLE_FIN_ALIGNEMENT) and self.state == "turn") : # si on est quasiment alignés avec le point
-                self.state="stop"
-            #Commence à tourner si l'angle est au dessus du seuil ANGLE_DEBUT_ALIGNEMENT
-            elif ((abs(self.angleRobotPoint+ self.glissement) > ANGLE_DEBUT_ALIGNEMENT) and self.state == "walk"):
-                self.state="walk"
-            #Par défaut, avance 
+        if self.state =="stop":
+            self.state="walk"
+        #Arrête de tourner si angle sous le seuil ANGLE_FIN_ALIGNEMENT
+        elif ((abs(self.angleRobotPoint+ self.glissement) < ANGLE_FIN_ALIGNEMENT) and self.state == "turn") : # si on est quasiment alignés avec le point
+            self.state="stop"
+        #Commence à tourner si l'angle est au dessus du seuil ANGLE_DEBUT_ALIGNEMENT
+        elif ((abs(self.angleRobotPoint+ self.glissement) > ANGLE_DEBUT_ALIGNEMENT) and self.state == "walk"):
+            self.state="walk"
+        #Par défaut, avance 
 
-            #---GESTION DEPLACEMENTS---#
-                
-            #Avance en ligne droite
-            if self.state == "walk":
-                msg = Twist()
-                msg.linear.x = 0.1
-                msg.linear.y = 0.0
-                msg.linear.z = 0.0
-                msg.angular.z = (self.angleRobotPoint + self.glissement) * 0.5
-                self.publisherTurtle.publish(msg)
+        #---GESTION DEPLACEMENTS---#
+
+        msg_vel = Twist()
+        msg_vel.linear.x = 0.0
+        msg_vel.linear.y = 0.0
+        msg_vel.linear.z = 0.0
+        msg_vel.angular.z = 0.0
+        #Avance en ligne droite
+        if self.state == "walk":
+            msg_vel.linear.x = 0.1
+            msg_vel.angular.z = (self.angleRobotPoint + self.glissement) * 0.5
             #Tourne vers l'objectif 
-            elif self.state == "turn":
-                #self.get_logger().info('Pas aligné' + str(self.angleRobotPoint))
-                msg = Twist()
-                msg.linear.x = 0.0
-                msg.linear.y = 0.0
-                msg.linear.z = 0.0
-                msg.angular.z = (self.angleRobotPoint + self.glissement) * 0.5 #Plus l'angle est élevé, plus le robot tourne vite
-                self.publisherTurtle.publish(msg)
-            #Reste immobile
-            else: 
-                msg = Twist()
-                msg.linear.x = 0.0
-                msg.linear.y = 0.0
-                msg.linear.z = 0.0
-                msg.angular.z = 0.0
-                self.publisherTurtle.publish(msg)
+        elif self.state == "turn":
+            #self.get_logger().info('Pas aligné' + str(self.angleRobotPoint))
+            msg_vel.angular.z = (self.angleRobotPoint + self.glissement) * 0.5 #Plus l'angle est élevé, plus le robot tourne vite
+            
+        self.publisherTurtle.publish(msg_vel)
         
      
         #ENVOI DE LA POSITION AUX VOISINS 
