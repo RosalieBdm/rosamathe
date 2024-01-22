@@ -1,6 +1,3 @@
-import rclpy
-from rclpy.node import Node
-import numpy as np
 import math
 
 
@@ -95,7 +92,7 @@ def calcul_angle_vecteur(point1, point2):
         return -1
     
     # calcul de l'angle du vecteur robot-point dans le référentiel du robot (valeur dans [-pi/2,pi/2])
-    angleVecteur = math.atan(vecteur_robot_point[1]/vecteur_robot_point[0] ) 
+    angleVecteur = math.atan(vecteur_robot_point[1]/vecteur_robot_point[0]) 
 
     # Si le vecteur est dans la moitié gauche du cercle trigo, on ajoute une rotation de pi pour que la valeur soit dans [-pi/2, 3pi/2]
     if (vecteur_robot_point[0] > 0):
@@ -112,26 +109,35 @@ def calcul_angle_vecteur(point1, point2):
 # orientation_voisin : float , orientation du voisin dans son référentiel, valeur dans [-pi, pi]
 # pos_robot : [float , float] , position du robot
 # orientation_robot : float , orientation du robot dans son référentiel, valeur dans [-pi, pi]
-def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot):
+def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot) -> float:
 
-    #calcul de la différence entre l'orientation du robot et l'orientation du voisin (v1 -v2)
-    angle_orientation_robot_voisin = orientation_robot - orientation_voisin 
-    print("v1-V2" + str(angle_orientation_robot_voisin))
-    #cacul de l'angle de l'axe robot-voisin
+    #calcul de la différence entre l'orientation du robot et l'orientation du voisin (v1 -v2) [-2pi,2pi]
+    angle_v1v2 = orientation_robot - orientation_voisin 
+    #Normalisation sur 0,2pi
+    if (angle_v1v2 < 0) :
+        angle_v1v2 += 2*math.pi
+
+    print("v1-V2" + str(angle_v1v2))
+    #cacul de l'angle de l'axe robot-voisin [0-2pi]
     angle_robot_voisin = calcul_angle_vecteur(pos_robot, pos_voisin)
 
     print("angle robot voisin " + str(angle_robot_voisin))
-    print("zegahl : " + str(angle_orientation_robot_voisin - angle_robot_voisin))
+    print("zegahl : " + str(angle_v1v2 - angle_robot_voisin))
     
-    #calcul de la distance avec le voisin pour pondérer le glissement 
-    distance_robot_voisin = calcul_distance(pos_robot, pos_voisin)
+    #calcul de l'angle à renvoyer [-2pi, 2pi]
+    angle_zeghal = angle_v1v2 - angle_robot_voisin
+    #Normalisation sur 0,2pi
+    if (angle_zeghal < 0) :
+        angle_zeghal += 2*math.pi
 
+    """
+    # si les robots ont fini de se croiser ( v1-v2 pas dans [-pi/2,pi/2]) -> angle_v1v2 [-pi/2, pi/2]
+    if (abs(angle_zeghal) > 1.4 ) :
+        return (0,angle_zeghal)
     #Glissement inversement proportionnel à la distance
-    if (angle_orientation_robot_voisin - angle_robot_voisin) > 0:
-        return (1.0/(distance_robot_voisin))
-    else : 
-        return -(1.0/(distance_robot_voisin))
-    
+    """
+
+    return angle_zeghal
 
 # Renvoie la distance entre deux points
 #point1 : [float, float]
