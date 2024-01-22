@@ -110,7 +110,8 @@ def calcul_angle_vecteur(point1, point2):
 # pos_robot : [float , float] , position du robot
 # orientation_robot : float , orientation du robot dans son référentiel, valeur dans [-pi, pi]
 def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot) -> float:
-
+    #calcul distance robot-voisin
+    distance_robot_voisin = calcul_distance(pos_robot, pos_voisin)
     #calcul de la différence entre l'orientation du robot et l'orientation du voisin (v1 -v2) [-2pi,2pi]
     angle_v1v2 = orientation_robot - orientation_voisin 
     #Normalisation sur 0,2pi
@@ -129,6 +130,26 @@ def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot) 
     #Normalisation sur 0,2pi
     if (angle_zeghal < 0) :
         angle_zeghal += 2*math.pi
+
+    orientation_referentiel_r1r2 = orientation_robot- angle_robot_voisin
+    #angle_zeghal < pi -> projection vers le haut 
+    if (angle_zeghal) < math.pi :
+        #v1 dans la moitié droite du cercle -> glissement dans le sens trigo 
+        if orientation_referentiel_r1r2 < math.pi/2 or orientation_referentiel_r1r2 > 3*math.pi/2 :
+            return 1.0/(distance_robot_voisin)*1.2
+        #v1 dans la moitié gauche du cercle -> glissement dans le sens inverse 
+        else :
+            return - 1.0/(distance_robot_voisin)*1.2
+    #angle_zeghal > pi -> projection vers le bas 
+    else : 
+        #v1 dans la moitié droite du cercle -> glissement dans le sens inverse 
+        if orientation_referentiel_r1r2 < math.pi/2 or orientation_referentiel_r1r2 > 3*math.pi/2 :
+
+            return - 1.0/(distance_robot_voisin)*1.2
+        #v1 dans la moitié gauche du cercle -> glissement dans le sens trigo 
+        else :
+            return  1.0/(distance_robot_voisin)*1.2
+
 
     """
     # si les robots ont fini de se croiser ( v1-v2 pas dans [-pi/2,pi/2]) -> angle_v1v2 [-pi/2, pi/2]

@@ -54,7 +54,6 @@ class SubscriberPublisher(Node):
         
         # Publisher qui donne la position du robot aux voisins
         self.publisherComm= self.create_publisher(Trajectories, '/turtle_com', 10)  #topic = nom du topic
-        self.distanceVoisin=0
         #-----------------------------------------#
         # DECLARATION  DES ATTRIBUTS DE LA CLASSE #
         #-----------------------------------------#
@@ -160,28 +159,8 @@ class SubscriberPublisher(Node):
                 self.get_logger().info('v1 v2: ' + str(self.orientation - msg.orientation) )
                 self.get_logger().info('orientation: ' + str(self.orientation ) )
                 angle_zeghal = calcul_zeghal(msg.orientation, positionVoisin, self.orientation, self.currentPosition)
-
-                #angle_zeghal < pi -> projection vers le haut 
-                if (angle_zeghal) < math.pi :
-                    #v1 dans la moitié droite du cercle -> glissement dans le sens trigo 
-                    if self.orientation < math.pi/2 or self.orientation > 3*math.pi/2 :
-                        self.glissement = 1.0/(calcul_distance(self.currentPosition, positionVoisin))*1.2
-                    #v1 dans la moitié gauche du cercle -> glissement dans le sens inverse 
-                    else :
-                        self.glissement =  - 1.0/(calcul_distance(self.currentPosition, positionVoisin))*1.2
-                #angle_zeghal > pi -> projection vers le bas 
-                else : 
-                    #v1 dans la moitié droite du cercle -> glissement dans le sens inverse 
-                    if self.orientation < math.pi/2 or self.orientation > 3*math.pi/2 :
-
-                        self.glissement = - 1.0/(calcul_distance(self.currentPosition, positionVoisin))*1.2
-                    #v1 dans la moitié gauche du cercle -> glissement dans le sens trigo 
-                    else :
-                        self.glissement =   1.0/(calcul_distance(self.currentPosition, positionVoisin))*1.2
-                
-                self.get_logger().info('zeghal: ' + str(angle_zeghal))
+                self.glissement = angle_zeghal
             else:
-                self.distanceVoisin = 10
                 self.glissement = 0
 
 
