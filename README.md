@@ -67,6 +67,11 @@
   - Tester plein de cas de figure différents
   - Peut-être revoir la gestion des virages ( parfois le robot tourne autour du point objectif)
 
+##   22/01:
+  - Les robots suivent les points et s'évitent (coefficient/angle d'évitement à revoir)
+  - grosses galères de zeghal 
     
+###   A faire:
+  - tester le nouveau zeghal 
 
 
