@@ -131,6 +131,7 @@ def calcul_zeghal(orientation_voisin, pos_voisin, orientation_robot, pos_robot) 
     if (angle_zeghal < 0) :
         angle_zeghal += 2*math.pi
 
+    #orientation de v1 (robot) dans le référentiel de l'axe robot-voisin 
     orientation_referentiel_r1r2 = orientation_robot- angle_robot_voisin
     #angle_zeghal < pi -> projection vers le haut 
     if (angle_zeghal) < math.pi :
