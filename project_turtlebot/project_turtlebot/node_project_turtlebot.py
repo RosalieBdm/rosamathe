@@ -153,7 +153,7 @@ class SubscriberPublisher(Node):
             #Si voisin dans le rayon de visibilité, calcul de zeghal
             #if detection_voisin(self.currentPosition, positionVoisin, RAYON_VISIBILITE):
                
-            if (detection_voisin(self.currentPosition, positionVoisin, RAYON_VISIBILITE) and (calcul_distance(self.coords_checkpoint_to_reach, self.currentPosition) < calcul_distance(self.currentPosition, self.coords_checkpoint_to_reach) or calcul_distance((msg.px,msg.py), self.currentPosition) < calcul_distance((msg.px,msg.py), positionVoisin)) ):
+            if (detection_voisin(self.currentPosition, positionVoisin, RAYON_VISIBILITE) and (calcul_distance(self.coords_checkpoint_to_reach, positionVoisin) < calcul_distance(self.currentPosition, self.coords_checkpoint_to_reach) or calcul_distance((msg.px,msg.py), self.currentPosition) < calcul_distance((msg.px,msg.py), positionVoisin)) ):
                 #calcul du glissement zeghal (angle)
                 self.get_logger().info('robot_voisin (r1 r2): ' + str(calcul_angle_vecteur(self.currentPosition, positionVoisin)))
                 self.get_logger().info('v1 v2: ' + str(self.orientation - msg.orientation) )
