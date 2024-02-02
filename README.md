@@ -5,13 +5,13 @@
 - mettre en place un protocole d'évitement entre les turtlebots
 
 ## Hypothèses:
-- L'environnement est connu (carte)
+- L'environnement est connu
 - Il n'y a pas d'obstacle entre les points
-- Les robots partent du même point
-- Les robots se croisent deux par deux 
+- Les robots se croisent deux par deux
+- Les robots ont le même référentiel
 
 ## Mise en oeuvre:
-- Un PC crée un node pour chaque turtlebot et les calculs sont effectués par les nodes (pas centralisé)
+- Un PC lance un cauncher qui crée un node pour chaque turtlebot et les calculs sont effectués par les nodes (système distribué)
 - ROS_DOMAIN_ID identique pour tous les turtlebots -> ajout de namespaces /robot_{ID} pour les distinguer 
 - communication entre les turtlebots sur le topic /turtle_com
 - calculs glissements de Zeghal pour l'évitement
@@ -19,8 +19,8 @@
 - détection des voisins par distance entre robot et voisin 
 
 ## Commandes pour lancer les turtlebots:
-### Pour chaque turtlebot:
-- Dans un premier terminal:
+
+### Dans un terminal pour chaque turtlebot:
   
       ssh jetson@192.168.1.1{ID}
       sudo chmod 666 /dev/ttyUSB0
@@ -29,20 +29,21 @@
       export ROS_DOMAIN_ID=1
       ros2 run kobuki_node kobuki_ros_node --ros-args --remap __ns:=/robot_{ID}
   
-- Dans un second terminal:
+### Dans un autre terminal:
   
       cd ~/rosamathe_ws
       export ROS_DOMAIN_ID=1
       source install/setup.bash
       colcon build
-      ros2 run project_turtlebot talker 
- -> mettre le code pour le launcher
+      ros2 launch project_turtlebot turtlebot.launch.py
+
   
 ## Fichiers:
 - custom_interfaces : package avec nos formats de messages customisés
 - project_turtlebot : package avec les nodes qui commandent les turtlebots (seulement 1 et 5 pour l'instant)
    - project_turtlebot_node : code python qui gère le node
    - utils : code python qui contient les fonctions utiles
+   - turtlebot.launch : launcher qui crée les node ( contient les paramètres initiaux hardcodés )
 - project_turtle_sim: package avec le node qui commande turtlesim
 
 # Avancées:
@@ -69,9 +70,17 @@
 
 ##   22/01:
   - Les robots suivent les points et s'évitent (coefficient/angle d'évitement à revoir)
-  - grosses galères de zeghal 
+  - gros changements dans les caulculs de zeghal 
     
-###   A faire:
-  - tester le nouveau zeghal 
+###  A faire:
+  - tester le nouveau zeghal
+
+##   23/01 (dernière séance) :
+  - Les robots suivent les points 
+  - Evitement correct lorsque les robots sont face à face, quelques probèmes lorsqu'ils sont perpendiculaires
+    
+###  Conclusion: 
+  - Suivi de points OK
+  - Evitement de Zeghal presque OK
 
 
