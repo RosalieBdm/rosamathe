@@ -79,8 +79,9 @@
   - Les robots suivent les points 
   - Evitement correct lorsque les robots sont face à face, quelques probèmes lorsqu'ils sont perpendiculaires
     
-###  Conclusion: 
-  - Suivi de points OK
-  - Evitement de Zeghal presque OK
+#  Conclusion: 
+  Les robots suivent correctement la liste de points et le réalignement est fluide.
+  Par contre, l'évitement à partir des glisssements de Zeghal fonctionne lorsque les robots sont face à face mais pas systématiquemetn lorsque les robots sont perpendiculaires.
+  Notre implémentation des calculs semble correcte, il faudrait revoir les conditions dévitemnt et les paramètres des glissements.
 
 
